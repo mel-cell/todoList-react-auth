@@ -17,7 +17,7 @@ const authMiddleware = (req: any, res: any, next: any) => {
     if (!header) {
         return res.status(401).json({ message: "kamu belum login" });
     }
-    const token = header.split(" ")[1];
+    const token = req.headers.authorization.split(" ")[1];
     
     if(!token){
         return res.status(401).json({message: "kamu belum login"})
@@ -66,6 +66,67 @@ app.post("/login", async (req, res) => {
     
     res.status(200).json({message: "login berhasil", token: token})
 });
+
+
+// todo services
+app.get("/todo", authMiddleware, async (req: any, res)=>{
+    const todos = await prisma.todo.findMany({
+        where: {
+            userId: req.user.id
+        }
+    });
+    res.status(200).json({todos})
+});
+
+app.post("/todo", authMiddleware, async (req: any, res)=> {
+    const {tittle} = req.body;
+    
+    const newTodo = await prisma.todo.create({
+        data: {
+            title: tittle,
+            userId: req.user.id
+        }
+    });
+    res.status(201).json({message: "tugas baru telah dibuat", todo: newTodo})
+});
+
+app.put("/todo/:id", authMiddleware, async (req: any, res)=> {
+    const {id} = req.params;
+    const {completed, title} = req.body;
+
+    try {
+
+        const updateTodo = await prisma.todo.update({
+            where: {
+                id: Number(id),
+                userId: req.user.id
+            },
+            data: {
+                ...(title !== undefined && {title: title}),
+                ...(completed !== undefined && {completed: completed})
+            }
+        });
+        res.status(200).json({message: "tugas berhasil di update"})
+    }catch(err) {
+        res.status(400).json({message: "ada kesalahan atau gagal terupdate"})
+    }
+});
+
+app.delete("/todo/:id", authMiddleware, async (req: any, res)=> {
+    const {id} = req.params;
+    
+    try {
+        const deleteTodo = await prisma.todo.delete({
+            where: {
+                id: Number(id),
+                userId: req.user.id
+            }
+        })
+        res.status(200).json({message: "tugas berhasil dihapus"})
+    }catch(err){
+        res.status(400).json({message: "ada kesalahan atau gagal terupdate"})
+    }
+})
 
 
 app.listen(port, () => {
