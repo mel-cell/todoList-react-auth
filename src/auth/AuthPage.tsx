@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 export const AuthPage = () => {
     const [email, setEmail] = useState("");
@@ -17,10 +18,11 @@ export const AuthPage = () => {
         );
         
         if(res.token){
+            toast.success("login berhasil")
             localStorage.setItem("token", res.token);
-            window.location.reload();
+            setTimeout(()=> window.location.reload(), 1000);
         }else {
-            alert(res.message || "login gagal")
+            toast.error(res.message || "login gagal")
         }
     }
 
@@ -31,7 +33,10 @@ export const AuthPage = () => {
         )
 
         if(res.message){
-            alert(res.message)
+            toast.success("register berhasil")
+            setTimeout(()=> window.location.reload(), 1000);
+        }else {
+            toast.error(res.message || "register gagal")
         }
     }
 
