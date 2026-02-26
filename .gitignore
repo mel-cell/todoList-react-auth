@@ -28,3 +28,8 @@ dist-ssr
 *.sw?
 
 /src/generated/prisma
+*.db
+*.db-journal
+test-prisma.ts
+find-key.ts
+debug-prisma.ts

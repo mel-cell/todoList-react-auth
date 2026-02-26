@@ -11,19 +11,22 @@ const port = 4444;
 app.use(cors());
 app.use(express.json());
 
-// middlewere
-const authMiddlewere = (req: any, res: any, next: any) => {
+// middleware
+const authMiddleware = (req: any, res: any, next: any) => {
     const header = req.headers.authorization;
+    if (!header) {
+        return res.status(401).json({ message: "kamu belum login" });
+    }
     const token = header.split(" ")[1];
     
     if(!token){
         return res.status(401).json({message: "kamu belum login"})
     }try {
         const data = jwt.verify(token, "kunciRahasia");
-        req.userId = (data as any).id;
+        req.user = data;
         next();
     }catch(err){
-        return res.json({message: "token nya salah"})
+        return res.status(401).json({message: "token nya salah"})
     }
 }
 
