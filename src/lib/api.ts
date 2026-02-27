@@ -1,6 +1,5 @@
 const API_URL = "http://localhost:4444";
-const token = localStorage.getItem("token");
-const getAuthHeader = ()=> ({ "Authorization": `bearer ${token}`})
+const getAuthHeader = ()=> ({ "Authorization": `bearer ${localStorage.getItem("token")}`})
     
 
 const api = {
@@ -40,7 +39,7 @@ const api = {
         const response = await fetch(`${API_URL}/todo`, {
             method: "POST",
             headers: {
-                "content-Type": "aplication-json",
+                "Content-Type": "application/json",
                 ...getAuthHeader()
             },
             body: JSON.stringify({title})

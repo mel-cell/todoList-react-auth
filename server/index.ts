@@ -79,11 +79,11 @@ app.get("/todo", authMiddleware, async (req: any, res)=>{
 });
 
 app.post("/todo", authMiddleware, async (req: any, res)=> {
-    const {tittle} = req.body;
+    const {title} = req.body;
     
     const newTodo = await prisma.todo.create({
         data: {
-            title: tittle,
+            title: title,
             userId: req.user.id
         }
     });
@@ -106,7 +106,7 @@ app.put("/todo/:id", authMiddleware, async (req: any, res)=> {
                 ...(completed !== undefined && {completed: completed})
             }
         });
-        res.status(200).json({message: "tugas berhasil di update"})
+        res.status(200).json({message: "tugas berhasil di update", todo: updateTodo})
     }catch(err) {
         res.status(400).json({message: "ada kesalahan atau gagal terupdate"})
     }
